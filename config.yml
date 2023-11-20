@@ -1,0 +1,12 @@
+recordings:
+  local: ~/Recordings/
+  remote: nessie:/Volumes/Recordings/
+
+lessons:
+  local: ~/Lessons/
+  remote: nessie:/Volumes/Lessons/
+  convert_to_mp3: true
+
+misc:
+  local: ~/Misc/
+  remote: nessie:/Volumes/Misc/
