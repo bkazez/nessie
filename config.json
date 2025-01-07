@@ -1,21 +1,21 @@
 {
   "documents_old": {
-    "local": "/Users/bkazez/Documents/Old/",
-    "remote": "bkazez@192.168.7.50:/volume1/Archives/Old/",
+    "local": "/Users/bkazez/Documents/Old",
+    "remote": "bkazez@192.168.7.50:/volume1/Archives/Old",
     "remote_rsync_path": "/bin/rsync",
     "compress_top_level_audio": false,
     "skip": true
   },
   "recordings": {
     "local": "/Users/bkazez/Documents/Music/Recordings",
-    "remote": "bkazez@192.168.7.50:/volume1/Archives/Recordings/",
+    "remote": "bkazez@192.168.7.50:/volume1/Archives/Recordings",
     "remote_rsync_path": "/bin/rsync",
     "compress_top_level_audio": true,
     "skip": false
   },
   "recordings-lacie": {
     "local": "/Volumes/LACIE/Recordings",
-    "remote": "bkazez@192.168.7.50:/volume1/Archives/Recordings/",
+    "remote": "bkazez@192.168.7.50:/volume1/Archives/Recordings",
     "remote_rsync_path": "/bin/rsync",
     "compress_top_level_audio": false,
     "skip": true
