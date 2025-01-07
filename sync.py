@@ -124,28 +124,35 @@ def compress_top_level_audio(source_dir, dry_run):
         print(f"Conversion process completed: {files_processed} audio files")
     return True
 
-def rsync_files(remote_rsync_path, source_dir, dest_dir, dry_run):
+def rsync_files(remote_rsync_path, source_dir, dest_dir, checksum, dry_run):
     rsync_command = [
         'rsync',
         '-e',
         "ssh -i /Users/bkazez/.ssh/id_ed25519 -o ServerAliveInterval=10",
-        f"--rsync-path={remote_rsync_path}",
-        '--archive',
         '--verbose',
-        '--itemize-changes',
+        '--itemize-changes', # Lists changes made during the sync in a detailed format.
+        '--update', # Skips files that are newer on the destination.
+        f"--rsync-path={remote_rsync_path}", # Specifies the path to the `rsync` executable on the remote system.
+        '--archive', # Enables archive mode, preserving symbolic links, permissions, timestamps, etc.
         '--human-readable',
-        # '--checksum',
         '--update',
-        '--progress',
-        '--partial',
+        '--progress', # Displays progress for each file being transferred.
+        '--partial', # Allows partially transferred files to be resumed instead of restarting.
+        # exclusions
         '--exclude', '.DS_Store',
+        '--exclude', 'DS_Store', # erroneously created by hard drive recovery
         '--exclude=*.pkf',
         '--exclude=*.reapeaks',
         '--exclude=' + os.path.join(ORIGINAL_AUDIO) + '/',
         source_dir,
-        dest_dir]
+        dest_dir
+    ]
+
+    if checksum:
+        rsync_command.append('--checksum')
     if dry_run:
         rsync_command.insert(1, '--dry-run')
+
     return run_or_simulate(rsync_command, False)
 
 def main():
@@ -177,8 +184,18 @@ def main():
         if settings.get('compress_top_level_audio') and not compress_top_level_audio(local_dir, args.dry_run):
             sys.exit(f"Error occurred during audio compression for {local_dir}.")
 
-        if not rsync_files(settings.get('remote_rsync_path'), local_dir, remote_dir, args.dry_run):
-            sys.exit(f"Error occurred during rsync for {local_dir} to {remote_dir}.")
+        # Ensure local_dir has a trailing slash
+        # Adding a trailing slash ensures that rsync copies only the contents of the directory
+        # instead of copying the directory itself into the destination.
+        if not local_dir.endswith('/'):
+            local_dir += '/'
+
+        # First, write the files without checksumming.
+        # Then, make sure that the above write worked by checksumming.
+        for checksum in [False, True]:
+            if not rsync_files(settings.get('remote_rsync_path'), local_dir, remote_dir, checksum=checksum, dry_run=args.dry_run):
+                sys.exit(f"Error occurred during rsync for {local_dir} to {remote_dir} with checksum={checksum}.")
+
 
     print("Archive process completed successfully.")
 
