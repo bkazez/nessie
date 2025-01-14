@@ -1,9 +1,9 @@
 # New process
-Fixed IP of Nessie is 192.168.7.50.
+Fixed IP of Nessie is 192.168.7.50. You can ssh in:
+
+ssh 192.168.7.50
 
 config.json shows which local volumes should be archived where.
-
-`pass show nessie`
 
 You should be able to:
 
